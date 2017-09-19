@@ -2,38 +2,36 @@ import sys, pygame, random
 
 assert sys.version_info >= (3,4), 'This script requires at least Python 3.4'
 
-''' pygame stuff '''
-#let pygame set itself up
 pygame.init()
 
-#window dimensions easy to divide by four
+#easy to divide by four
 size = (width,height) = (800,800)
-#puzzle dimensions
 dimensions = (rows,columns) = (4,4)
 
-font = pygame.font.SysFont("arial",64)
-#initialize the window
-screen = pygame.display.set_mode(size)
 
-
-''' Square object '''
 class Square:
 	color = ''
 	label = ''
 	position = (-1,-1)
-	size = (0,0)
+	dim = (0,0)
+	height = 0
 	visible = True
 	
-	def __init__(self, x, y, width, height):
+	def __init__(self, x, y, w, h):
 		self.position = (x,y)
-		self.size = (width,height)
+		self.dim = (w,h)
 	
 	def check_proximity(self, xy):
 		''' take a x/y position (as a tuple) and see if it is next to the current position '''
+		if self.position == (-1,-1): return False
+		if self.position == xy: return False
+		if (abs(xy[0] - self.position[0]) <= 1 and xy[1] == self.position[1]) or (abs(xy[1] - self.position[1]) <= 1 and xy[0] == self.position[0]):
+			return True
 		return False
 	
 	def swap_position(self, xy):
 		''' move to new x/y (tuple) position '''
+		self.position = xy
 	
 	def in_correct_position(self, pos):
 		''' check if self.position lines up with which square this is in the list '''
@@ -43,7 +41,7 @@ class Square:
 		''' add the square to the draw object '''
 		if self.visible:
 			(x1,y1) = self.position
-			(w,h) = self.size
+			(w,h) = self.dim
 			(x,y) = (x1 * w,y1 * h)
 			draw.rect(screen, self.color, (x,y,w,h))
 			f = font.render(self.label,True,(0,0,0))
@@ -54,45 +52,78 @@ class Square:
 		return draw
 
 
-''' Other helper functions '''
+def draw_puzzle(puzzle):
+	screen.fill((0,0,0))
+	for i in range(len(puzzle)):
+		puzzle[i].draw_square(pygame.draw,screen)
+	pygame.display.flip()
+
 def calculate_xy(pos,puzzle):
 	''' calculates which square is the target '''
-	(w,h) = (width / columns, height / rows)
-	#the magic of integer division: we can figure out which square a mouse click happens in
-	return (int(pos[0]//w),int(pos[1]//h))
+	w = width / columns
+	h = height / rows
+	to_return = (int(pos[0]//w),int(pos[1]//h))
+	return to_return
 
 def randomize_puzzle(count,puzzle):
-	''' mix up the puzzle, so it can be played; count represents how much we mix it '''
-	return puzzle
+	for e in puzzle:
+		if not e.visible:
+			for c in range(count):
+				xy = (x,y) = (e.position[0]+random.randint(-1,1),e.position[1]+random.randint(-1,1))
+				if (x >= 0 and x < columns) and (y >= 0 and y < rows):
+					if e.check_proximity(xy):
+						for p in puzzle:
+							if p.position == xy:
+								p.swap_position(e.position)
+								e.swap_position(xy)
+	return puzzle		
 
-def draw_puzzle(puzzle):
-	''' draw the puzzle on the screen '''
-
-
-''' Main code body '''
-#colors are in RGB format (0–255 for each value represents the intensity of the mixture of red, green, and blue, respectively)
-#If you need pretty colors, I like the library at https://yeun.github.io/open-color/
-colors = [(255,0,0)]	
-
+#colors taken from https://yeun.github.io/open-color/
+colors = [(134,142,150),(250,82,82),(230,73,128),(190,75,219),(121,80,242),(76,110,245),(34,138,230),(21,170,191),(18,184,134),(64,192,87),(130,201,30),(250,176,5),(253,126,20),(233,236,239),(255,236,153),(163,218,255)]	
 #build puzzle
 puzzle = []
 count = 0
-#instantiate an object. It is initialized with a x/y which-square position and a width/height (in pixels)
-puzzle.append(Square(0,0,width/columns,height/rows))
-puzzle[0].color = colors[count % len(colors)]
-puzzle[0].label = str(count+1)
-puzzle[0].visible = True
+for j in range(columns):
+	for i in range(rows):
+		temp = Square(i, j, width / columns, height / rows)
+		temp.color = colors[count % len(colors)]
+		count = count + 1
+		temp.label = str(count)
+		puzzle.append(temp)
+puzzle[len(puzzle)-1].visible = False
 
 puzzle = randomize_puzzle(500,puzzle)
 
+font = pygame.font.SysFont("arial",64)
+#initialize the window
+screen = pygame.display.set_mode(size)
+
 moves = 0
 draw_puzzle(puzzle)
-
-''' The Game Loop '''
-while True:
+winning = False
+while not winning:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT: sys.exit()
 		# handle MOUSEBUTTONUP
 		if event.type == pygame.MOUSEBUTTONUP:
 			pos = pygame.mouse.get_pos()
 			xy = calculate_xy(pos,puzzle)
+			print(xy)
+			for e in puzzle:
+				if not e.visible:
+					if e.check_proximity(xy):
+						for c in puzzle:
+							if c.position == xy:
+								c.swap_position(e.position)
+								e.swap_position(xy)
+								draw_puzzle(puzzle)
+								moves = moves + 1
+			winning = True
+			for i in range(len(puzzle)):
+				xy = (x,y) = (i % columns, i // rows)
+				if puzzle[i].position != xy:
+					winning = False
+			if winning:
+				for e in puzzle:
+					e.visible = True
+print('You won in only ' + str(moves) + ' moves! Good job!')
