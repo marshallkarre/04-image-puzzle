@@ -23,22 +23,22 @@ class Square:
 	position = (-1,-1)
 	size = (0,0)
 	visible = True
-	
+
 	def __init__(self, x, y, width, height):
 		self.position = (x,y)
 		self.size = (width,height)
-	
+
 	def check_proximity(self, xy):
 		''' take a x/y position (as a tuple) and see if it is next to the current position '''
 		return False
-	
+
 	def swap_position(self, xy):
 		''' move to new x/y (tuple) position '''
-	
+
 	def in_correct_position(self, pos):
 		''' check if self.position lines up with which square this is in the list '''
 		return False
-	
+
 	def draw_square(self, draw, screen):
 		''' add the square to the draw object '''
 		if self.visible:
@@ -67,12 +67,14 @@ def randomize_puzzle(count,puzzle):
 
 def draw_puzzle(puzzle):
 	''' draw the puzzle on the screen '''
-
+	for square in puzzle:
+		square.draw_square(pygame.draw, screen)
+	pygame.display.flip()
 
 ''' Main code body '''
 #colors are in RGB format (0–255 for each value represents the intensity of the mixture of red, green, and blue, respectively)
 #If you need pretty colors, I like the library at https://yeun.github.io/open-color/
-colors = [(255,0,0)]	
+colors = [(255,0,0)]
 
 #build puzzle
 puzzle = []
