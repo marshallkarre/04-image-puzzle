@@ -30,11 +30,11 @@ class Square:
 
 	def check_proximity(self, xy):
 		''' take a x/y position (as a tuple) and see if it is next to the current position '''
-		return False
+		return True
 
 	def swap_position(self, xy):
 		''' move to new x/y (tuple) position '''
-
+		self.position=xy
 	def in_correct_position(self, pos):
 		''' check if self.position lines up with which square this is in the list '''
 		return False
@@ -89,6 +89,8 @@ for j in range(columns):
 		puzzle.append(temp)
 puzzle[len(puzzle)-1].visible = False
 
+blackblock = puzzle[len(puzzle)-1]
+
 puzzle = randomize_puzzle(500,puzzle)
 
 moves = 0
@@ -102,3 +104,6 @@ while True:
 		if event.type == pygame.MOUSEBUTTONUP:
 			pos = pygame.mouse.get_pos()
 			xy = calculate_xy(pos,puzzle)
+			if blackblock.check_proximity(xy):
+				blackblock.swap_position(xy)
+				draw_puzzle(puzzle)
