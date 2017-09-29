@@ -74,7 +74,7 @@ def draw_puzzle(puzzle):
 ''' Main code body '''
 #colors are in RGB format (0–255 for each value represents the intensity of the mixture of red, green, and blue, respectively)
 #If you need pretty colors, I like the library at https://yeun.github.io/open-color/
-colors = [(255,0,0)]
+colors = [(134,142,150),(250,82,82),(230,73,128),(190,75,219),(121,80,242),(76,110,245),(34,138,230),(21,170,191),(18,184,134),(64,192,87),(130,201,30),(250,176,5),(253,126,20),(233,236,239),(255,236,153),(163,218,255)]	
 
 #build puzzle
 puzzle = []
