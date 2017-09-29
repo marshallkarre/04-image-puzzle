@@ -74,16 +74,20 @@ def draw_puzzle(puzzle):
 ''' Main code body '''
 #colors are in RGB format (0–255 for each value represents the intensity of the mixture of red, green, and blue, respectively)
 #If you need pretty colors, I like the library at https://yeun.github.io/open-color/
-colors = [(134,142,150),(250,82,82),(230,73,128),(190,75,219),(121,80,242),(76,110,245),(34,138,230),(21,170,191),(18,184,134),(64,192,87),(130,201,30),(250,176,5),(253,126,20),(233,236,239),(255,236,153),(163,218,255)]	
+colors = [(100,50,150),(250,82,82),(200,70,120),(190,75,219),(121,80,242),(70,210,200),(34,138,230),(250,200,191),(18,184,134),(64,192,87),(130,201,30),(250,176,5),(253,126,20),(200,106,239),(255,106,153),(163,218,100)]
 
 #build puzzle
 puzzle = []
 count = 0
 #instantiate an object. It is initialized with a x/y which-square position and a width/height (in pixels)
-puzzle.append(Square(0,0,width/columns,height/rows))
-puzzle[0].color = colors[count % len(colors)]
-puzzle[0].label = str(count+1)
-puzzle[0].visible = True
+for j in range(columns):
+	for i in range(rows):
+		temp = Square(i, j, width / columns, height / rows)
+		temp.color = colors[count % len(colors)]
+		count = count + 1
+		temp.label = str(count)
+		puzzle.append(temp)
+puzzle[len(puzzle)-1].visible = False
 
 puzzle = randomize_puzzle(500,puzzle)
 
