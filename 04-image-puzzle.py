@@ -104,6 +104,7 @@ while True:
 		if event.type == pygame.MOUSEBUTTONUP:
 			pos = pygame.mouse.get_pos()
 			xy = calculate_xy(pos,puzzle)
-			if blackblock.check_proximity(xy):
-				blackblock.swap_position(xy)
-				draw_puzzle(puzzle)
+			for blackblock in puzzle:
+					if blackblock.check_proximity(xy):
+						blackblock.swap_position(xy)
+						draw_puzzle(puzzle)
