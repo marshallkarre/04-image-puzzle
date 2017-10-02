@@ -87,7 +87,7 @@ for j in range(columns):
 		count = count + 1
 		temp.label = str(count)
 		puzzle.append(temp)
-puzzle[len(puzzle)-1].visible = False
+#puzzle[len(puzzle)-1].visible = False
 
 blackblock = puzzle[len(puzzle)-1]
 
@@ -104,7 +104,10 @@ while True:
 		if event.type == pygame.MOUSEBUTTONUP:
 			pos = pygame.mouse.get_pos()
 			xy = calculate_xy(pos,puzzle)
-			for blackblock in puzzle:
-					if blackblock.check_proximity(xy):
+			if blackblock.check_proximity(xy):
+				for s in puzzle:
+					print(vars(s))
+					if s.position == xy:
+						s.swap_position(blackblock.position)
 						blackblock.swap_position(xy)
-						draw_puzzle(puzzle)
+				draw_puzzle(puzzle)
