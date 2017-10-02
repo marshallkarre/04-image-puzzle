@@ -30,7 +30,11 @@ class Square:
 
 	def check_proximity(self, xy):
 		''' take a x/y position (as a tuple) and see if it is next to the current position '''
-		return True
+		if self.position == (-1,-1): return False
+		if self.position == xy: return False
+		if (abs(xy[0] - self.position[0]) <= 1 and xy[1] == self.position[1]) or (abs(xy[1] - self.position[1]) <= 1 and xy[0] == self.position[0]):
+			return True
+		return False
 
 	def swap_position(self, xy):
 		''' move to new x/y (tuple) position '''
